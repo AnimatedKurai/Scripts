@@ -1,0 +1,80 @@
+-- https://v3rmillion.net/showthread.php?tid=889695
+-- Sikke 27/08/2019
+
+local UserName  = game:GetService('Players').LocalPlayer.Name
+local Autoride = true
+
+local Animations = {Shoot = 95383980, Reload = 95384819}
+local Ammo = 10
+local Icon, Mesh, Texture = 95356596, 95356090, 95387789
+local Name, ToolTip = "Luger", "A Fucking gun"
+
+-- Cloud Express
+-- [!]Do not edit below[!] --
+local CE = {}
+local Variables = {
+	workspace = game:GetService("Workspace"),
+	players = game:GetService("Players")
+}
+
+local MainUserP, MainUserW = Variables.players.LocalPlayer, Variables.workspace:FindFirstChild(UserName)
+
+function CE:FireEvent(ItemName, Object, Property, Value)
+	MainUserW:FindFirstChild(ItemName)["ServerControl"]:InvokeServer("SetProperty",{["Value"]=Value,["Property"]=Property,["Object"]=Object})
+end
+
+Variables.workspace.Buy:FireServer(0, "PompousTheCloud")
+MainUserP["Backpack"]:WaitForChild("PompousTheCloud").Parent = MainUserW
+
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"],"TextureId","rbxassetid://"..Icon)
+
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"]["Handle"]["Mesh"],"MeshId","rbxassetid://"..Mesh)
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"]["Handle"]["Mesh"],"TextureId","rbxassetid://"..Texture)
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"]["Handle"]["Mesh"],"Scale",Vector3.new(2,2,2))
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"]["Handle"]["Mesh"],"Orientation",Vector3.new(-0.23,12.94,1.05))
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"]["Handle"]["Mesh"],"Position",Vector3.new(-111.387,3.568,-35.084))
+
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"],"GripForward",Vector3.new(-0.545, -0.089, -0.834))
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"],"GripPos",Vector3.new(0.094, -0.206, 0.56))
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"],"GripRight",Vector3.new(1, -0.026, 0))
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"],"GripUp",Vector3.new(-0.027, 0.996, -0.089))
+
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"],"ToolTip",ToolTip)
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"]["LocalScript"],"Disabled",true)
+CE:FireEvent("PompousTheCloud",MainUserW["PompousTheCloud"],"Name",Name)
+wait()
+
+local Luger = MainUserW["Luger"]
+
+function ReloadLuger()
+	local Animation = Instance.new("Animation") -- RELOAD
+	Animation.AnimationId = "rbxassetid://95384819"
+	local AnimationLoader = MainUserP.Character.Humanoid:LoadAnimation(Animation)
+	AnimationLoader:Play()
+	AnimationLoader:AdjustSpeed(1)
+	Ammo = Ammo + 10
+end
+
+MainUserP:GetMouse().Button1Down:Connect(function()
+	if MainUserW:FindFirstChild("Luger") then
+		if Ammo >= 0 then
+			if MainUserP:GetMouse().Target.Parent:FindFirstChild("HumanoidRootPart") or MainUserP:GetMouse().Target.Parent.Parent:FindFirstChild("HumanoidRootPart") then
+				CE:FireEvent("Luger",Luger,"GripRight",Vector3.new(0.838, -0.026, -0.545))
+				local Animation = Instance.new("Animation") -- SHOOT
+				Animation.AnimationId = "rbxassetid://95383980"
+				local AnimationLoader = MainUserP.Character.Humanoid:LoadAnimation(Animation)
+				AnimationLoader:Play()
+				AnimationLoader:AdjustSpeed(1)
+				wait()
+				Variables.workspace.GuiEvent:FireServer("Bullet")
+				wait(0.5)
+				CE:FireEvent("Luger",MainUserW["Bullet"]:WaitForChild("Head"),"Parent",MainUserP:GetMouse().Target.Parent)
+				Ammo = Ammo - 1
+				CE:FireEvent("Luger",Luger,"GripRight",Vector3.new(1, -0.026, 0))
+			end
+		elseif Ammo == 0 or Ammo <= 0 then
+			ReloadLuger()
+		end
+	end
+end)
+

